@@ -41,4 +41,4 @@ yarn start -c
 
 Para iconos: https://github.com/expo/vector-icons , @expo/vector-icons directory, 
 Seleccionamos uno que nos guste, e importamos {Feather/ FontAwesome} from '@expo/vector-icons'
-Para usarlo: <Feather name="trash" /> 
+Para usarlo:  ```<Feather name="trash" /> ```

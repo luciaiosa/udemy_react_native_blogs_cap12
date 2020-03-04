@@ -1,6 +1,7 @@
-import React, { useContext, useState } from 'react';
-import { View, Text, TextInput, StyleSheet, Button } from 'react-native';
+import React, { useContext } from 'react';
+import { StyleSheet } from 'react-native';
 import { Context } from '../context/BlogContext';
+import BlogPostForm from '../components/BlogPostForm';
 
 const EditScreen = ({ navigation }) => {
 
@@ -11,32 +12,45 @@ const EditScreen = ({ navigation }) => {
 
     const blog = state.find(item => item.id === id);
 
-    const [title, setTitle] = useState(blog.title);
-    const [content, setContent] = useState(blog.content);
+    // REFACTORIZAR USANDO UN COMPONENTE REUTILIZABLE, BlogPostForm
+    // const [title, setTitle] = useState(blog.title);
+    // const [content, setContent] = useState(blog.content);
 
-    return (
-        <View>
-            <Text style={styles.label}>Edit title:</Text>
-            <TextInput value={title} onChangeText={(newValue) => setTitle(newValue)} style={styles.input} />
-            <Text style={styles.label}>Edit content:</Text>
-            <TextInput value={content} onChangeText={(newValue) => setContent(newValue)} style={styles.input} />
-            <Button title="Edit blog post" onPress={() => {
-                // una manera de navegar a Index una vez se haya creado el post
-                // Pero no es buena opción cuando se tenga que hacer una llamada a una API para guardar la info en la BBDD, ya que editBlogPost se ejecuta inmediatamente, y en una milesima de segundo
-                // Entonces no queremos navegar inmediatamente después de hacer la llamada API, sino esperar la respuesta!!
+    return (<BlogPostForm
+                // Hay que pasarle a la funcion los valores title, content provenientes de BlogPostForm
+                onSubmit={(title, content) => {
+                    editBlogPost(id, title, content, () => {
+                        navigation.navigate('Index');
+                    })
+                }}
+                initialValues={{ title: blog.title, content: blog.content }}
+                labels={{ title: 'Edit title:', content: 'Edit content:' }} 
+            />
 
-                // editBlogPost(title, content);
-                // navigation.navigate('Index');   
+        // REFACTORIZAR USANDO UN COMPONENTE REUTILIZABLE, BlogPostForm
 
-                // MEJOR!! Añadir a editBlogPost() un tercer param, un callback a una función que navega a Index!!
-                // en editBlogPost (BlogContext.js), después de haber guardado la info a la BBDD, se invocará este callback, que navegará al Index!!
+        // <View>
+        //     <Text style={styles.label}>Edit title:</Text>
+        //     <TextInput value={title} onChangeText={(newValue) => setTitle(newValue)} style={styles.input} />
+        //     <Text style={styles.label}>Edit content:</Text>
+        //     <TextInput value={content} onChangeText={(newValue) => setContent(newValue)} style={styles.input} />
+        //     <Button title="Edit blog post" onPress={() => {
+        //         // una manera de navegar a Index una vez se haya creado el post
+        //         // Pero no es buena opción cuando se tenga que hacer una llamada a una API para guardar la info en la BBDD, ya que editBlogPost se ejecuta inmediatamente, y en una milesima de segundo
+        //         // Entonces no queremos navegar inmediatamente después de hacer la llamada API, sino esperar la respuesta!!
 
-                editBlogPost(title, content, () => {
-                    navigation.navigate('Index');
-                })
+        //         // editBlogPost(title, content);
+        //         // navigation.navigate('Index');   
 
-            }} />
-        </View>
+        //         // MEJOR!! Añadir a editBlogPost() un tercer param, un callback a una función que navega a Index!!
+        //         // en editBlogPost (BlogContext.js), después de haber guardado la info a la BBDD, se invocará este callback, que navegará al Index!!
+
+        //         editBlogPost(title, content, () => {
+        //             navigation.navigate('Index');
+        //         })
+
+        //     }} />
+        // </View>
     )
 };
 

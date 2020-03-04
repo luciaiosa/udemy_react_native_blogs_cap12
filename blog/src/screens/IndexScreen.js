@@ -48,11 +48,10 @@ const IndexScreen = ({ navigation }) => {
 // Añade en la parte derecha del titulo el icono +, que navega a la pantalla Create al pulsarlo
 IndexScreen.navigationOptions = ({ navigation }) => {
     return {
-        headerRight: (
+        headerRight: () => 
             <TouchableOpacity onPress={() => navigation.navigate('Create')}>
                 <Feather name="plus" size={30} />
             </TouchableOpacity>
-        )
     }
 }
 

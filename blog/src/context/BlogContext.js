@@ -5,8 +5,12 @@ const blogReducer = (state, action) => {
     switch (action.type) {
         case 'add_blogpost':
             return [...state, { id: Math.floor(Math.random() * 99999), title: action.payload.title, content: action.payload.content }];
-        case 'editBlogPost':
-            return [ ...state, {title: action.payload.title, content: action.payload.content} ]
+        case 'edit_blogpost':
+            return state.map((blogPost) => {
+                return blogPost.id === action.payload.id
+                    ? action.payload
+                    : blogPost;
+            })
         case 'delete_blogpost':
             return state.filter((blogPost) => blogPost.id !== action.payload);
         default:
@@ -21,15 +25,15 @@ const addBlogPost = (dispatch) => {
     // dispatch({type: 'add_blogpost'}) dispatches an object
     return (title, content, callback) => {
         // Con dispatch se cambia el estado
-        dispatch({ type: 'add_blogpost', payload: {title : title, content: content } });
+        dispatch({ type: 'add_blogpost', payload: { title: title, content: content } });
         // callback (param y llamada) se añade en caso de que haya una llamada a una API y necesitamos que espere primero la respuesta, antes de llamar la función
         callback();
     }
 }
 
 const editBlogPost = (dispatch) => {
-    return (id) => {
-        dispatch({ type: 'edit_blogpost', payload: id });
+    return (id, title, content) => {
+        dispatch({ type: 'edit_blogpost', payload: { id, title, content } });
     }
 }
 
@@ -41,7 +45,7 @@ const deleteBlogPost = (dispatch) => {
 
 // llamar createDataContext, y le pasamos el reducer, un objeto con todas las actions, y el valor inicial del estado
 // va a devolver el Contexto y el Provider, un componente que hace los datos disponibles en el resto de componentes de la app
-export const { Context, Provider } = createDataContext(blogReducer, { addBlogPost, deleteBlogPost }, []);
+export const { Context, Provider } = createDataContext(blogReducer, { addBlogPost, deleteBlogPost, editBlogPost }, []);
 
 // const addBlogPost = (dispatch) => {
 //     return (title, content, callback) => {

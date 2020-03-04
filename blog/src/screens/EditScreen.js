@@ -20,7 +20,7 @@ const EditScreen = ({ navigation }) => {
                 // Hay que pasarle a la funcion los valores title, content provenientes de BlogPostForm
                 onSubmit={(title, content) => {
                     editBlogPost(id, title, content, () => {
-                        navigation.navigate('Index');
+                        navigation.pop();  // pop() va a la pantalla anterior!!!
                     })
                 }}
                 initialValues={{ title: blog.title, content: blog.content }}

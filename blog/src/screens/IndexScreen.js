@@ -1,7 +1,7 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 // hooks (useContext) = funciones que añaden funcionalidades extra a componentes de tipo función. 
 
-import { StyleSheet, Text, View, FlatList, Button, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, FlatList, TouchableOpacity } from 'react-native';
 // TouchableOpacity se usa para convertir cualquier elemento en un elemento capaz de responder al hacer click 
 import { Context as BlogContext } from '../context/BlogContext';
 // import { Context as ImageContext} from '../context/ImageContext';
@@ -15,7 +15,23 @@ const IndexScreen = ({ navigation }) => {
     // useContext hace que se pueda usar BlogContext en este componente, con los datos que este contiene!!
     // ESTO ES TODO QUE HACE FALTA PARA USAR EL Contexto!!! const value = useContext(BlogContext);
 
-    const { state, addBlogPost, deleteBlogPost } = useContext(BlogContext);
+    const { state, deleteBlogPost, getBlogPosts } = useContext(BlogContext);
+
+    // Para que no haya un bucle infinito de llamadas, no llamamos getBlogPosts() directamente, sino useEffect, con el segundo param un [] vacío, para que sólo se haga la llamada la primera vez que el componente se renderice
+    useEffect(() => {
+        getBlogPosts();
+
+        // Cada vez que esta pantalla se enfoca, se invocará esta función. Sino, sólo se llamará getBlogPosts una sola vez, y no van a aparecer en Index todos los blogs después de haber creado uno nuevo
+        const listener = navigation.addListener('didFocus', () => {
+            getBlogPosts();
+        })
+        // Con esto, se llama getBlogPosts() la primera vez que el componente se renderice, y también cuando se vuelve a volver a esta página, después de haber creado nuevo post
+
+        // Si se devuelve una función dentro de useEffect(), se llamará en beforeUnmount()!! Sirve para borrar todos los listeners, borrar la caché, etc!!!
+        return ()=> {
+            listener.remove();
+        }
+    }, [])
 
     return (
         <View>
@@ -23,7 +39,7 @@ const IndexScreen = ({ navigation }) => {
             {/* <Button title="Add Post" onPress={addBlogPost} /> */}
             <FlatList
                 data={state}
-                // keyExtractor={(item) => item.title}
+                keyExtractor={(item) => item.id.toString()}
                 renderItem={({ item }) => {
                     return (
                         // Envuelvo cada item en TouchableOpacity, para que, al pulsar en cualquier sitio de la fila, vaya a la descripción del post!!
